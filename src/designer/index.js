@@ -83,6 +83,7 @@ class Designer extends Component {
       },
     });
     this.graph.saveXML = (createFile = true) => exportXML(this.graph.save(),this.state.processModel,createFile);
+    this.graph.saveJSON = () => this.saveJOSN(this.graph.save());
     if(isView){
       this.graph.setMode("view");
     }else{
@@ -94,6 +95,10 @@ class Designer extends Component {
       this.graph.fitView(5)
     }
     this.initEvents();
+  }
+
+  saveJOSN(json) {
+    console.log(json);
   }
 
   initShape(data){

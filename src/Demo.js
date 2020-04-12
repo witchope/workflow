@@ -140,8 +140,8 @@ class Demo extends Component {
         const {modalVisible, selectedLang} = this.state;
         return (
             <div>
-                <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
-                        onClick={() => this.wfdRef.current.graph.saveXML()}>导出XML</Button>
+                <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
+                        onClick={() => this.wfdRef.current.graph.saveJSON()}>保存</Button>
                 <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
                         onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
                 <Dropdown overlay={this.langMenu} trigger={['click']}>
