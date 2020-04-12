@@ -1,8 +1,7 @@
 import editorStyle from '../util/defaultStyle';
-import Util from "@antv/g6/lib/util";
 
-const SingleShapeMixin = require('@antv/g6/lib/shape/single-shape-mixin');
-
+const SingleShapeMixin = require('@antv/g6/src/shape/single-shape-mixin');
+const Util = require('@antv/g6/src/util');
 export default function(G6) {
   G6.Shape.registerFactory('controlPoint', {
     defaultShapeType: 'point-control-marker',

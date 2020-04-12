@@ -1,11 +1,10 @@
 import editorStyle from '../util/defaultStyle';
+const Item = require('@antv/g6/src/item/item');
 
-const Item = require('@antv/g6/lib/item/item');
-
-const createAnchor = (index, style, group) => {
+const createAnchor = (index,style,group) => {
   const anchorContainer = group.addGroup();
   const anchor = new Item({
-    type: "anchor",
+    type: 'anchor',
     group: anchorContainer,
     capture: false,
     index,
@@ -14,15 +13,15 @@ const createAnchor = (index, style, group) => {
       style: {
         ...style,
         ...editorStyle.anchorPointStyle,
-        cursor: editorStyle.cursor.hoverEffectiveAnchor
+        cursor: editorStyle.cursor.hoverEffectiveAnchor,
       }
-    }
+    },
   });
   anchor.isAnchor = true;
   anchor.toFront();
   let hotpot;
-  anchor.showHotpot = function() {
-    hotpot = anchorContainer.addShape("marker", {
+  anchor.showHotpot = function () {
+    hotpot = anchorContainer.addShape('marker', {
       attrs: {
         ...style,
         ...editorStyle.anchorHotsoptStyle
@@ -31,17 +30,17 @@ const createAnchor = (index, style, group) => {
     hotpot.toFront();
     anchor.getKeyShape().toFront();
   };
-  anchor.setActived = function() {
-    anchor.update({ style: { ...editorStyle.anchorPointHoverStyle } });
+  anchor.setActived = function () {
+    anchor.update({style: {...editorStyle.anchorPointHoverStyle}});
   };
-  anchor.clearActived = function() {
-    anchor.update({ style: { ...editorStyle.anchorPointStyle } });
+  anchor.clearActived = function () {
+    anchor.update({style: {...editorStyle.anchorPointStyle}});
   };
-  anchor.setHotspotActived = function(act) {
+  anchor.setHotspotActived = function (act) {
     hotpot &&
-      (act
-        ? hotpot.attr(editorStyle.anchorHotsoptActivedStyle)
-        : hotpot.attr(editorStyle.anchorHotsoptStyle));
+    (act ?
+      hotpot.attr(editorStyle.anchorHotsoptActivedStyle)
+      : hotpot.attr(editorStyle.anchorHotsoptStyle))
   };
   return anchorContainer;
 };

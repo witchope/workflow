@@ -1,4 +1,4 @@
-import styles from "./index.less";
+import styles from "./index.module.less";
 import React, {useContext} from "react";
 import DefaultDetail from "./DefaultDetail";
 import LangContext from "../../util/context";

@@ -106,7 +106,7 @@ export default function (G6) {
           || node.getModel().clazz === 'messageStart')
           return;
         const targetGroupId = node.getModel().groupId;
-        if (!sourceGroupId && targetGroupId || sourceGroupId && !targetGroupId || sourceGroupId !== targetGroupId)
+        if ((!sourceGroupId && targetGroupId) || (sourceGroupId && !targetGroupId) || sourceGroupId !== targetGroupId)
           return;
         const group = node.getContainer();
         group.showAnchor(group);

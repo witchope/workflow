@@ -12,10 +12,10 @@ import FlowDetail from "./FlowDetail";
 import StartEventDetail from "./StartEventDetail";
 import EndEventDetail from "./EndEventDetail";
 import ProcessDetail from "./ProcessDetail";
-import 'antd/lib/input/style';
-import 'antd/lib/select/style';
-import 'antd/lib/switch/style';
-import styles from "./index.less";
+// import 'antd/lib/input/style';
+// import 'antd/lib/select/style';
+// import 'antd/lib/switch/style';
+import styles from "./index.module.less";
 
 const DetailPanel = forwardRef(({height,model,users,groups,messageDefs,signalDefs,onChange,readOnly = false,},ref)=>{
   return (

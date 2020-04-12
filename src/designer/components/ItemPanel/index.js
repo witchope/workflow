@@ -1,7 +1,7 @@
 import React, {forwardRef, useContext} from "react";
-import styles from "./index.less";
+import styles from "./index.module.less";
 import {Collapse} from "antd";
-import 'antd/lib/collapse/style';
+// import 'antd/lib/collapse/style';
 import LangContext from "../../util/context";
 const { Panel } = Collapse;
 

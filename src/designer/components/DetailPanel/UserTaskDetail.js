@@ -1,4 +1,4 @@
-import styles from "./index.less";
+import styles from "./index.module.less";
 import {Checkbox, DatePicker, Input, Select} from "antd";
 import React, {useContext} from "react";
 import moment from "moment";

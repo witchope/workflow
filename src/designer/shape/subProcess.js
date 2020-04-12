@@ -2,9 +2,9 @@ import editorStyle from '../util/defaultStyle';
 import { getShapeName } from '../util/clazz';
 import { Util } from '@antv/g6';
 
-const Item = require('@antv/g6/lib/item/item');
-const Node = require('@antv/g6/lib/item/node');
-const Edge = require('@antv/g6/lib/item/edge');
+const Item = require('@antv/g6/src/item/item');
+const Node = require('@antv/g6/src/item/node');
+const Edge = require('@antv/g6/src/item/edge');
 
 export default function(G6) {
   G6.registerNode('sub-process-node', {
@@ -280,7 +280,7 @@ export default function(G6) {
     },
     afterUpdate(cfg, node) {
       // TODO 因为没有改变 shape 所以不会更新
-      const bbox = node.getBBox();
+      // const bbox = node.getBBox();
       const group = node.getContainer();
       const subGroup = group.subGroup;
       if (subGroup) {

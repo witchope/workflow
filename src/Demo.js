@@ -2,7 +2,6 @@ import Designer from "./designer";
 import React, {Component} from "react";
 import {Button, Modal, Dropdown, Menu} from 'antd'
 import {GlobalOutlined} from '@ant-design/icons'
-import 'antd/dist/antd.less'
 
 class Demo extends Component {
     constructor(props) {
@@ -14,6 +13,56 @@ class Demo extends Component {
         modalVisible: false,
         selectedLang: 'zh',
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const data = {
+            tasks: [
+                {
+                    displayName: "一级审",
+                    name: "一级审",
+                    actorRule: {approvalWay: 0, roleIds: [{id: 29}]},
+                    transition: {
+                        displayName: "transition0",
+                        name: "transition0",
+                        to: "end",
+                        sourceAnchor: null,
+                        targetAnchor: null
+                    },
+                    x: null,
+                    y: null,
+                    taskType: "",
+                    form: null,
+                    performType: "ANY",
+                    autoExecute: null
+                }
+            ],
+            decision: null,
+            displayName: "入库审批",
+            name: "入库审批",
+            start: {
+                displayName: "入库审批",
+                name: "入库审批",
+                actorRule: null,
+                transition: {
+                    displayName: "transition",
+                    name: "transition",
+                    to: "一级审",
+                    sourceAnchor: null,
+                    targetAnchor: null
+                },
+                x: null,
+                y: null
+            },
+            end: {
+                displayName: "结束",
+                name: "end",
+                actorRule: null,
+                transition: null,
+                x: null,
+                y: null
+            }
+        }
+    }
 
     langMenu = (
         <Menu onClick={(lang) => {
@@ -98,11 +147,29 @@ class Demo extends Component {
                 <Dropdown overlay={this.langMenu} trigger={['click']}>
                     <GlobalOutlined style={{fontSize: 18, float: 'right', marginTop: 12, marginRight: 20}}/>
                 </Dropdown>
-                <Designer ref={this.wfdRef} data={data} height={height} mode={"edit"} users={candidateUsers}
-                          groups={candidateGroups} lang={selectedLang}/>
-                <Modal title="查看流程图" visible={modalVisible} onCancel={() => this.handleModalVisible(false)} width={800}
-                       maskClosable={false} footer={null} destroyOnClose bodyStyle={{height}}>
-                    <Designer data={data1} height={height - 40} isView/>
+                <Designer
+                    ref={this.wfdRef}
+                    data={data}
+                    height={height}
+                    mode={"edit"} users={candidateUsers}
+                    groups={candidateGroups}
+                    lang={selectedLang}
+                    isView={false}
+                />
+                <Modal
+                    title="查看流程图"
+                    visible={modalVisible}
+                    onCancel={() => this.handleModalVisible(false)}
+                    width={800}
+                    maskClosable={false}
+                    footer={null}
+                    destroyOnClose
+                    bodyStyle={{height}}>
+                    <Designer
+                        data={data1}
+                        height={height - 40}
+                        isView
+                    />
                 </Modal>
             </div>
         );

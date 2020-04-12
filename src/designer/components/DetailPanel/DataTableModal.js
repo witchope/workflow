@@ -9,7 +9,7 @@ const DataTableModal = ({visible,title,onOk,onCancel,data,cols,newRowKeyPrefix,l
       const updater = changedData.find(s => d.id === s.id);
       if (updater) {
         if(updater.isDelete){
-          return;
+          return false;
         } else {
           const u = {...d, ...updater};
           delete u.isNew;

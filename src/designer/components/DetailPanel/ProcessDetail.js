@@ -1,4 +1,4 @@
-import styles from "./index.less";
+import styles from "./index.module.less";
 import {Input, Button} from "antd";
 import React, {useContext, useState} from "react";
 import LangContext from "../../util/context";

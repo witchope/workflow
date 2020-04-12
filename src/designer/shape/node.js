@@ -14,6 +14,7 @@ const dashArray = [
 ];
 const interval = 9;
 const lineDash = [4, 2, 1, 2];
+
 export default function(G6) {
   G6.registerNode('base-node', {
     options:{
@@ -47,7 +48,8 @@ export default function(G6) {
           }, group);
         group.anchorShapes.push(anchor);
         group.getAllAnchors = () => {
-          return group.anchorShapes.map(c => {
+          //TODO
+          return group.anchorShapes.forEach(c => {
             c.filter(a => a.isAnchor)
           })
         };

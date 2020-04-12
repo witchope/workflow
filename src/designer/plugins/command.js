@@ -4,10 +4,6 @@ const isString = require('@antv/util/lib/type/is-string');
 
 class Command{
 
-  constructor() {
-
-  }
-
   getDefaultCfg() {
     return { _command: { zoomDelta: .1, queue: [], current: 0, clipboard: [] } };
   }

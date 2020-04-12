@@ -288,10 +288,11 @@ export default function(G6){
       for(let i=0; i < bboxes.length; i++) {
         const bbox = bboxes[i];
         if (p1.x === p2.x && bbox.minX < p1.x && bbox.maxX > p1.x) {
-          if (p1.y < bbox.maxY && p2.y >= bbox.maxY || p2.y < bbox.maxY && p1.y >= bbox.maxY)
+          if ((p1.y < bbox.maxY && p2.y >= bbox.maxY) || (p2.y < bbox.maxY && p1.y >= bbox.maxY)) {
             return true
+          }
         } else if (p1.y === p2.y && bbox.minY < p1.y && bbox.maxY > p1.y) {
-          if (p1.x < bbox.maxX && p2.x >= bbox.maxX || p2.x < bbox.maxX && p1.x >= bbox.maxX)
+          if ((p1.x < bbox.maxX && p2.x >= bbox.maxX) || (p2.x < bbox.maxX && p1.x >= bbox.maxX))
             return true
         }
       }

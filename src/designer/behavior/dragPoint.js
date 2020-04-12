@@ -1,4 +1,3 @@
-import editorStyle from "../util/defaultStyle";
 
 export default function (G6) {
     G6.registerBehavior('dragPoint', {

@@ -1,8 +1,8 @@
 import React, {forwardRef, useContext} from "react";
-import '../../iconfont.css';
-import styles from "./index.less";
+import '../../iconfont.module.css';
+import styles from "./index.module.less";
 import { Tooltip } from "antd";
-import 'antd/lib/tooltip/style';
+// import 'antd/lib/tooltip/style';
 import LangContext from "../../util/context";
 
 const ToolbarPanel = forwardRef((props,ref) => {

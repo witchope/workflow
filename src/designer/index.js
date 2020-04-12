@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import styles from './index.less';
-import G6 from '@antv/g6';
+import styles from './index.module.less';
+import G6 from '@antv/g6/src';
 import { getShapeName } from './util/clazz'
-import locale from './locales/index';
+import locale from './locales';
 import Command from './plugins/command'
 import Toolbar from './plugins/toolbar'
 import AddItemPanel from './plugins/addItemPanel'
