@@ -14,7 +14,7 @@ import ItemPanel from "./components/ItemPanel";
 import ToolbarPanel from "./components/ToolbarPanel";
 import registerShape from './shape'
 import registerBehavior from './behavior'
-import convertDto, {convertVo} from "./util/convertor";
+import convertDto, {convertVo} from "./util/converter";
 
 registerShape(G6);
 registerBehavior(G6);
