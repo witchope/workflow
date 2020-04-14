@@ -15,6 +15,7 @@ import ToolbarPanel from "./components/ToolbarPanel";
 import registerShape from './shape'
 import registerBehavior from './behavior'
 import convertDto, {convertVo} from "./util/converter";
+import {Modal} from "antd";
 
 registerShape(G6);
 registerBehavior(G6);
@@ -100,9 +101,36 @@ class Designer extends Component {
     }
 
     saveJOSN(json) {
-        console.log(json);
-        // convertDto(json);
-        convertVo(json)
+        const out = convertDto(json);
+
+        if (this.props.id) {
+            out.processId = this.props.id;
+        }
+
+        const url = "/approval/saveProcess";
+        const header = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(out)
+        };
+
+        const response = fetch(url, header)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                if (data.status === 500) {
+                    Modal.error({
+                        title: data.message
+                    })
+                    return
+                }
+                Modal.success({title: '保存成功'});
+                this.props.updateId(data.data);
+            })
+
     }
 
     initShape(data) {

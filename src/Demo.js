@@ -2,6 +2,7 @@ import Designer from "./designer";
 import React, {Component} from "react";
 import {Button, Modal, Dropdown, Menu} from 'antd'
 import {GlobalOutlined} from '@ant-design/icons'
+import {convertVo} from "./designer/util/converter";
 
 class Demo extends Component {
     constructor(props) {
@@ -12,56 +13,35 @@ class Demo extends Component {
     state = {
         modalVisible: false,
         selectedLang: 'zh',
+        data: {},
+        id: 208,
     };
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const data = {
-            tasks: [
-                {
-                    displayName: "一级审",
-                    name: "一级审",
-                    actorRule: {approvalWay: 0, roleIds: [{id: 29}]},
-                    transition: {
-                        displayName: "transition0",
-                        name: "transition0",
-                        to: "end",
-                        sourceAnchor: null,
-                        targetAnchor: null
-                    },
-                    x: null,
-                    y: null,
-                    taskType: "",
-                    form: null,
-                    performType: "ANY",
-                    autoExecute: null
-                }
-            ],
-            decision: null,
-            displayName: "入库审批",
-            name: "入库审批",
-            start: {
-                displayName: "入库审批",
-                name: "入库审批",
-                actorRule: null,
-                transition: {
-                    displayName: "transition",
-                    name: "transition",
-                    to: "一级审",
-                    sourceAnchor: null,
-                    targetAnchor: null
-                },
-                x: null,
-                y: null
-            },
-            end: {
-                displayName: "结束",
-                name: "end",
-                actorRule: null,
-                transition: null,
-                x: null,
-                y: null
-            }
+    async UNSAFE_componentWillMount() {
+        const {id} = this.state;
+        if (id) {
+            this.getRemoteData(id);
+
         }
+    }
+
+    getRemoteData(id) {
+        const url = `/approval/queryProcessDetail?processId=208`;
+        const header = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        };
+
+        fetch(url, header)
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                const resp = convertVo(data.data)
+                this.setState({data: resp})
+            });
     }
 
     langMenu = (
@@ -92,56 +72,21 @@ class Demo extends Component {
     }
 
     render() {
-        const data = {
-            nodes: [{id: 'startNode1', x: 50, y: 200, label: '', clazz: 'start',},
-                {id: 'startNode2', x: 50, y: 320, label: '', clazz: 'timerStart',},
-                {id: 'taskNode1', x: 200, y: 200, label: '主任审批', clazz: 'userTask',},
-                {id: 'taskNode2', x: 400, y: 200, label: '经理审批', clazz: 'scriptTask',},
-                {id: 'gatewayNode', x: 400, y: 320, label: '金额大于1000', clazz: 'inclusiveGateway',},
-                {id: 'taskNode3', x: 400, y: 450, label: '董事长审批', clazz: 'receiveTask',},
-                {id: 'catchNode1', x: 600, y: 200, label: '等待结束', clazz: 'signalCatch',},
-                {id: 'endNode', x: 600, y: 320, label: '', clazz: 'end',}],
-            edges: [{source: 'startNode1', target: 'taskNode1', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'startNode2', target: 'gatewayNode', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'taskNode1', target: 'catchNode1', sourceAnchor: 0, targetAnchor: 0, clazz: 'flow'},
-                {source: 'taskNode1', target: 'taskNode2', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'taskNode2', target: 'gatewayNode', sourceAnchor: 1, targetAnchor: 0, clazz: 'flow'},
-                {source: 'taskNode2', target: 'taskNode1', sourceAnchor: 2, targetAnchor: 2, clazz: 'flow'},
-                {source: 'gatewayNode', target: 'taskNode3', sourceAnchor: 2, targetAnchor: 0, clazz: 'flow'},
-                {source: 'gatewayNode', target: 'endNode', sourceAnchor: 1, targetAnchor: 2, clazz: 'flow'},
-                {source: 'taskNode3', target: 'endNode', sourceAnchor: 1, targetAnchor: 1, clazz: 'flow'},
-                {source: 'catchNode1', target: 'endNode', sourceAnchor: 1, targetAnchor: 0, clazz: 'flow'}]
-        };
-
-        const data1 = {
-            nodes: [{id: 'startNode1', x: 50, y: 200, label: '', clazz: 'start',},
-                {id: 'startNode2', x: 50, y: 320, label: '', clazz: 'timerStart',},
-                {id: 'taskNode1', x: 200, y: 200, label: '主任审批', clazz: 'userTask',},
-                {id: 'taskNode2', x: 400, y: 200, label: '经理审批', clazz: 'scriptTask', active: true},
-                {id: 'gatewayNode', x: 400, y: 320, label: '金额大于1000', clazz: 'gateway',},
-                {id: 'taskNode3', x: 400, y: 450, label: '董事长审批', clazz: 'receiveTask',},
-                {id: 'catchNode1', x: 600, y: 200, label: '等待结束', clazz: 'signalCatch',},
-                {id: 'endNode', x: 600, y: 320, label: '', clazz: 'end',}],
-            edges: [{source: 'startNode1', target: 'taskNode1', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'startNode2', target: 'gatewayNode', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'taskNode1', target: 'catchNode1', sourceAnchor: 0, targetAnchor: 0, clazz: 'flow'},
-                {source: 'taskNode1', target: 'taskNode2', sourceAnchor: 1, targetAnchor: 3, clazz: 'flow'},
-                {source: 'taskNode2', target: 'gatewayNode', sourceAnchor: 1, targetAnchor: 0, clazz: 'flow'},
-                {source: 'taskNode2', target: 'taskNode1', sourceAnchor: 2, targetAnchor: 2, clazz: 'flow'},
-                {source: 'gatewayNode', target: 'taskNode3', sourceAnchor: 2, targetAnchor: 0, clazz: 'flow'},
-                {source: 'gatewayNode', target: 'endNode', sourceAnchor: 1, targetAnchor: 2, clazz: 'flow'},
-                {source: 'taskNode3', target: 'endNode', sourceAnchor: 1, targetAnchor: 1, clazz: 'flow'},
-                {source: 'catchNode1', target: 'endNode', sourceAnchor: 1, targetAnchor: 0, clazz: 'flow'}]
-        };
 
         const candidateUsers = [{id: '1', name: 'Tom'}, {id: '2', name: 'Steven'}, {id: '3', name: 'Andy'}];
         const candidateGroups = [{id: '1', name: 'Manager'}, {id: '2', name: 'Security'}, {id: '3', name: 'OA'}];
         const height = 600;
-        const {modalVisible, selectedLang} = this.state;
+        const {modalVisible, selectedLang, data: remoteData, id} = this.state;
         return (
             <div>
                 <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
-                        onClick={() => this.wfdRef.current.graph.saveJSON()}>保存</Button>
+                        onClick={() => {
+                            Modal.info({
+                                title: '确定要保存',
+                                onOk: () => this.wfdRef.current.graph.saveJSON()
+                            })
+                        }
+                        }>保存</Button>
                 <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
                         onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
                 <Dropdown overlay={this.langMenu} trigger={['click']}>
@@ -149,12 +94,14 @@ class Demo extends Component {
                 </Dropdown>
                 <Designer
                     ref={this.wfdRef}
-                    data={data}
+                    data={remoteData}
                     height={height}
                     mode={"edit"} users={candidateUsers}
                     groups={candidateGroups}
                     lang={selectedLang}
                     isView={false}
+                    updateId={(id) => this.setState({id})}
+                    id={id}
                 />
                 <Modal
                     title="查看流程图"
@@ -166,7 +113,7 @@ class Demo extends Component {
                     destroyOnClose
                     bodyStyle={{height}}>
                     <Designer
-                        data={data1}
+                        data={remoteData}
                         height={height - 40}
                         isView
                     />

@@ -1,10 +1,13 @@
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware }  = require('http-proxy-middleware');
 
 module.exports = function(app) {
     app.use(
-        '/',
-        proxy({
-            target: 'http://192.168.2.200:8080',
+        '/approval',
+        createProxyMiddleware({
+            pathRewrite: {
+              '^/approval/': '/'
+            },
+            target: 'http://10.244.2.120:8080',
             changeOrigin: true,
             secure: false,
         })
