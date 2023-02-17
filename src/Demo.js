@@ -1,8 +1,9 @@
 import Designer from "./designer";
 import React, {Component} from "react";
 import {Button, Modal, Dropdown, Menu} from 'antd'
-import {GlobalOutlined} from '@ant-design/icons'
+import {GlobalOutlined, MailOutlined} from '@ant-design/icons'
 import {convertVo} from "./designer/util/converter";
+import FormDesigner from "./designer/components/FormDesigner";
 
 class Demo extends Component {
     constructor(props) {
@@ -15,6 +16,8 @@ class Demo extends Component {
         selectedLang: 'zh',
         data: {},
         id: 208,
+        flowDesignVisible: true,
+        formDesignVisible: false,
     };
 
     async UNSAFE_componentWillMount() {
@@ -75,50 +78,74 @@ class Demo extends Component {
 
         const candidateUsers = [{id: '1', name: 'Tom'}, {id: '2', name: 'Steven'}, {id: '3', name: 'Andy'}];
         const candidateGroups = [{id: '1', name: 'Manager'}, {id: '2', name: 'Security'}, {id: '3', name: 'OA'}];
-        const height = 600;
+        let height = 840;
         const {modalVisible, selectedLang, data: remoteData, id} = this.state;
         return (
-            <div>
-                <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
-                        onClick={() => {
-                            Modal.info({
-                                title: '确定要保存',
-                                onOk: () => this.wfdRef.current.graph.saveJSON()
-                            })
-                        }
-                        }>保存</Button>
-                <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
-                        onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
-                <Dropdown overlay={this.langMenu} trigger={['click']}>
-                    <GlobalOutlined style={{fontSize: 18, float: 'right', marginTop: 12, marginRight: 20}}/>
-                </Dropdown>
-                <Designer
-                    ref={this.wfdRef}
-                    data={remoteData}
-                    height={height}
-                    mode={"edit"} users={candidateUsers}
-                    groups={candidateGroups}
-                    lang={selectedLang}
-                    isView={false}
-                    updateId={(id) => this.setState({id})}
-                    id={id}
-                />
-                <Modal
-                    title="查看流程图"
-                    visible={modalVisible}
-                    onCancel={() => this.handleModalVisible(false)}
-                    width={800}
-                    maskClosable={false}
-                    footer={null}
-                    destroyOnClose
-                    bodyStyle={{height}}>
+            <>
+                <Menu mode="horizontal"
+                      defaultSelectedKeys={['flow-design']}
+                      onSelect={({key}) => {
+                          if (key === 'flow-design') {
+                              this.setState({flowDesignVisible: true});
+                          } else {
+                              this.setState({flowDesignVisible: false});
+                          }
+                          if (key === 'form-design') {
+                              this.setState({formDesignVisible: true});
+                          } else {
+                              this.setState({formDesignVisible: false});
+                          }
+                      }}>
+                    <Menu.Item key='flow-design'>
+                        审批流程
+                    </Menu.Item>
+                    <Menu.Item key="form-design">
+                        审批表单
+                    </Menu.Item>
+                </Menu>
+                <div style={this.state.flowDesignVisible ? {} : {display: 'none'}}>
+                    <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
+                            onClick={() => {
+                                Modal.info({
+                                    title: '确定要保存',
+                                    onOk: () => this.wfdRef.current.graph.saveJSON()
+                                })
+                            }
+                            }>保存</Button>
+                    <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
+                            onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
+                    <Dropdown overlay={this.langMenu} trigger={['click']}>
+                        <GlobalOutlined style={{fontSize: 18, float: 'right', marginTop: 12, marginRight: 20}}/>
+                    </Dropdown>
                     <Designer
+                        ref={this.wfdRef}
                         data={remoteData}
-                        height={height - 40}
-                        isView
+                        height={height}
+                        mode={"edit"} users={candidateUsers}
+                        groups={candidateGroups}
+                        lang={selectedLang}
+                        isView={false}
+                        updateId={(id) => this.setState({id})}
+                        id={id}
                     />
-                </Modal>
-            </div>
+                    <Modal
+                        title="查看流程图"
+                        visible={modalVisible}
+                        onCancel={() => this.handleModalVisible(false)}
+                        width={800}
+                        maskClosable={false}
+                        footer={null}
+                        destroyOnClose
+                        bodyStyle={{height}}>
+                        <Designer
+                            data={remoteData}
+                            height={height - 40}
+                            isView
+                        />
+                    </Modal>
+                </div>
+                {this.state.formDesignVisible && <FormDesigner/>}
+            </>
         );
     }
 }

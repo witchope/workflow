@@ -1,9 +1,10 @@
 export function convertVo(json) {
-
+    if (!json) return;
     const nodeContainer = [];
     const edgeContainer = [];
 
     const {start, end, tasks, decision} = json;
+    if (!start) return;
     const startNode = {
         id: start.name || '',
         x: start.x,
@@ -111,6 +112,7 @@ const convertDto = (json) => {
         y: endNode.y,
     }
 
+    debugger;
     const tasks = nodes
         .filter(x => x.id.startsWith("task"))
         .map((x, i) => {

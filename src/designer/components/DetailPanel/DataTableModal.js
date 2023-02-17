@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Modal} from "antd";
-// import EditableTable from "antd-etable";
 
 const DataTableModal = ({visible,title,onOk,onCancel,data,cols,newRowKeyPrefix,lang}) => {
   const [changedData,setChangedData] = useState([]);
@@ -35,20 +34,6 @@ const DataTableModal = ({visible,title,onOk,onCancel,data,cols,newRowKeyPrefix,l
            onCancel={handleCancel}
            width={800}
            maskClosable={false}>
-      {/*<EditableTable*/}
-      {/*  title=""*/}
-      {/*  lang={lang}*/}
-      {/*  newRowKeyPrefix={newRowKeyPrefix}*/}
-      {/*  showTopPager={false}*/}
-      {/*  showToolbar={false}*/}
-      {/*  loading={false}*/}
-      {/*  data={data}*/}
-      {/*  changedData={changedData}*/}
-      {/*  pageSize={data.length}*/}
-      {/*  total={data.length}*/}
-      {/*  cols={cols}*/}
-      {/*  onChangedDataUpdate={(d)=>{setChangedData(d)}}*/}
-      {/*/>*/}
     </Modal>
   )
 };
