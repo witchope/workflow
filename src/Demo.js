@@ -5,6 +5,8 @@ import {GlobalOutlined, MailOutlined} from '@ant-design/icons'
 import {convertVo} from "./designer/util/converter";
 import FormDesigner from "./designer/components/FormDesigner";
 
+const FormContext = React.createContext({});
+
 class Demo extends Component {
     constructor(props) {
         super(props);
@@ -18,13 +20,13 @@ class Demo extends Component {
         id: 208,
         flowDesignVisible: true,
         formDesignVisible: false,
+        schema: {},
     };
 
     async UNSAFE_componentWillMount() {
         const {id} = this.state;
         if (id) {
             this.getRemoteData(id);
-
         }
     }
 
@@ -74,6 +76,11 @@ class Demo extends Component {
         this.setState({selectedLang: key})
     }
 
+    saveSchema = (schema) => {
+        debugger;
+        this.setState({schema: schema})
+    }
+
     render() {
 
         const candidateUsers = [{id: '1', name: 'Tom'}, {id: '2', name: 'Steven'}, {id: '3', name: 'Andy'}];
@@ -82,69 +89,72 @@ class Demo extends Component {
         const {modalVisible, selectedLang, data: remoteData, id} = this.state;
         return (
             <>
-                <Menu mode="horizontal"
-                      defaultSelectedKeys={['flow-design']}
-                      onSelect={({key}) => {
-                          if (key === 'flow-design') {
-                              this.setState({flowDesignVisible: true});
-                          } else {
-                              this.setState({flowDesignVisible: false});
-                          }
-                          if (key === 'form-design') {
-                              this.setState({formDesignVisible: true});
-                          } else {
-                              this.setState({formDesignVisible: false});
-                          }
-                      }}>
-                    <Menu.Item key='flow-design'>
-                        审批流程
-                    </Menu.Item>
-                    <Menu.Item key="form-design">
-                        审批表单
-                    </Menu.Item>
-                </Menu>
-                <div style={this.state.flowDesignVisible ? {} : {display: 'none'}}>
-                    <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
-                            onClick={() => {
-                                Modal.info({
-                                    title: '确定要保存',
-                                    onOk: () => this.wfdRef.current.graph.saveJSON()
-                                })
-                            }
-                            }>保存</Button>
-                    <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
-                            onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
-                    <Dropdown overlay={this.langMenu} trigger={['click']}>
-                        <GlobalOutlined style={{fontSize: 18, float: 'right', marginTop: 12, marginRight: 20}}/>
-                    </Dropdown>
-                    <Designer
-                        ref={this.wfdRef}
-                        data={remoteData}
-                        height={height}
-                        mode={"edit"} users={candidateUsers}
-                        groups={candidateGroups}
-                        lang={selectedLang}
-                        isView={false}
-                        updateId={(id) => this.setState({id})}
-                        id={id}
-                    />
-                    <Modal
-                        title="查看流程图"
-                        visible={modalVisible}
-                        onCancel={() => this.handleModalVisible(false)}
-                        width={800}
-                        maskClosable={false}
-                        footer={null}
-                        destroyOnClose
-                        bodyStyle={{height}}>
+                <FormContext.Provider value={{}}>
+                    <Menu mode="horizontal"
+                          defaultSelectedKeys={['flow-design']}
+                          onSelect={({key}) => {
+                              if (key === 'flow-design') {
+                                  this.setState({flowDesignVisible: true});
+                              } else {
+                                  this.setState({flowDesignVisible: false});
+                              }
+                              if (key === 'form-design') {
+                                  this.setState({formDesignVisible: true});
+                              } else {
+                                  this.setState({formDesignVisible: false});
+                              }
+                          }}>
+                        <Menu.Item key='flow-design'>
+                            审批流程
+                        </Menu.Item>
+                        <Menu.Item key="form-design">
+                            审批表单
+                        </Menu.Item>
+                    </Menu>
+                    <div style={this.state.flowDesignVisible ? {} : {display: 'none'}}>
+                        <Button type="primary" style={{float: 'right', marginTop: 6, marginRight: 6}}
+                                onClick={() => {
+                                    Modal.info({
+                                        title: '确定要保存',
+                                        onOk: () => this.wfdRef.current.graph.saveJSON()
+                                    })
+                                }
+                                }>保存</Button>
+                        <Button style={{float: 'right', marginTop: 6, marginRight: 6}}
+                                onClick={() => this.handleModalVisible(true)}>查看流程图</Button>
+                        <Dropdown overlay={this.langMenu} trigger={['click']}>
+                            <GlobalOutlined style={{fontSize: 18, float: 'right', marginTop: 12, marginRight: 20}}/>
+                        </Dropdown>
                         <Designer
+                            ref={this.wfdRef}
                             data={remoteData}
-                            height={height - 40}
-                            isView
+                            height={height}
+                            mode={"edit"} users={candidateUsers}
+                            groups={candidateGroups}
+                            lang={selectedLang}
+                            isView={false}
+                            updateId={(id) => this.setState({id})}
+                            id={id}
                         />
-                    </Modal>
-                </div>
-                {this.state.formDesignVisible && <FormDesigner/>}
+                        <Modal
+                            title="查看流程图"
+                            visible={modalVisible}
+                            onCancel={() => this.handleModalVisible(false)}
+                            width={800}
+                            maskClosable={false}
+                            footer={null}
+                            destroyOnClose
+                            bodyStyle={{height}}>
+                            <Designer
+                                data={remoteData}
+                                height={height - 40}
+                                isView
+                            />
+                        </Modal>
+                    </div>
+                    {this.state.formDesignVisible &&
+                        <FormDesigner saveSchema={this.saveSchema} schema={this.state.schema}/>}
+                </FormContext.Provider>
             </>
         );
     }
