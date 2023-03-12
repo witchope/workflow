@@ -87,92 +87,76 @@ const cascade = {
 }
 
 const amountSchema = {
-    title: "金额范围",
-    type: "array",
-    items: {
-        type: "object",
-        properties: {
-            current: {
-                title: "当前金额",
-                type: "string",
-                description: "人民币",
-                enum: [
-                    "=",
-                    ">",
-                    "<",
-                    ">=",
-                    "<=",
-                ],
-                widget: "select",
-                hidden: false,
-                width: "40%",
-                enumNames: [
-                    "等于",
-                    "大于",
-                    "小于",
-                    "大于或等于",
-                    "小于或等于",
-                ],
-                labelWidth: 159
-            },
-            target: {
-                title: "金额",
-                type: "number",
-                width: "40%",
-                labelWidth: 80,
-                description: "元",
-            },
-        }
+    type: "object",
+    properties: {
+        current: {
+            title: "当前金额",
+            type: "string",
+            description: "人民币",
+            enum: [
+                "=",
+                ">",
+                "<",
+                ">=",
+                "<=",
+            ],
+            widget: "select",
+            hidden: false,
+            width: "40%",
+            enumNames: [
+                "等于",
+                "大于",
+                "小于",
+                "大于或等于",
+                "小于或等于",
+            ],
+            labelWidth: 159
+        },
+        target: {
+            title: "金额",
+            type: "number",
+            width: "40%",
+            labelWidth: 80,
+            description: "元",
+        },
     }
 };
 const singleSchema = {
-    title: "单行输入",
-    type: "array",
-    items: {
-        type: "object",
-        properties: {
-            current: {
-                title: "当前字段",
-                type: "string",
-                widget: "select",
-                enum: [
-                    "field",
-                ],
-                enumNames: [
-                    "字段名",
-                ],
-                hidden: false,
-                width: "30%",
-                labelWidth: 159
-            },
-            relation: {
-                title: "",
-                type: "string",
-                enum: [
-                    "=",
-                    ">",
-                    "<",
-                    ">=",
-                    "<=",
-                ],
-                widget: "select",
-                hidden: false,
-                width: "30%",
-                enumNames: [
-                    "等于",
-                    "大于",
-                    "小于",
-                    "大于或等于",
-                    "小于或等于",
-                ],
-                labelWidth: 159
-            },
-            target: {
-                type: "string",
-                width: "40%",
-                labelWidth: 80,
-            },
-        }
+    type: "object",
+    properties: {
+        current: {
+            title: "当前字段",
+            type: "string",
+            widget: "select",
+            enum: [
+                "field",
+            ],
+            enumNames: [
+                "字段名",
+            ],
+            hidden: false,
+            width: "30%",
+        },
+        relation: {
+            title: "关系",
+            type: "string",
+            enum: [
+                "equals",
+                "contains",
+            ],
+            widget: "select",
+            hidden: false,
+            width: "30%",
+            enumNames: [
+                "等于",
+                "包含",
+            ],
+        },
+        target: {
+            title: "内容",
+            type: "string",
+            width: "10%",
+        },
     }
 };
 
@@ -198,7 +182,6 @@ const dateSchema =
 
 
 const FormDesigner = ({schema, saveSchema}) => {
-    debugger;
     // console.log(defaultSettings);
     // console.log(defaultCommonSettings);
     // console.log(defaultGlobalSettings)
@@ -251,16 +234,9 @@ const FormDesigner = ({schema, saveSchema}) => {
                 },
             }}
         />
-        <Row>
-        </Row>
-        <Col span={24}> </Col>
-        <Row>
-            <Col span={10}></Col>
-            <Col span={10}></Col>
-            <Col span={4}>
-                <Button type={"primary"} onClick={handleOk}>保存</Button>
-            </Col>
-        </Row>
+        <div style={{display: "flex", flexDirection: "row-reverse"}}>
+            <Button type={"primary"} style={{marginRight: 100, marginTop: 50}} onClick={handleOk}>保存</Button>
+        </div>
     </div>
 
 }

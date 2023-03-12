@@ -8,7 +8,7 @@ const StartEventDetail = ({model,onChange,readOnly = false,}) => {
   const title = i18n['startEvent'];
   return (
     <div data-clazz={model.clazz}>
-      <div className={styles.panelTitle}>{title}</div>
+      {/*<div className={styles.panelTitle}>{title}</div>*/}
       <div className={styles.panelBody}>
         <DefaultDetail model={model} onChange={onChange} readOnly={readOnly}/>
       </div>

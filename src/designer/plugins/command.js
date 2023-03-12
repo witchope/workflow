@@ -98,9 +98,11 @@ class Command{
             return false;
         }
     });
-    const group = subProcess.getContainer();
-    const resultModel = group.removeItem(subProcess, itemId);
-    graph.updateItem(subProcess, resultModel);
+    if(subProcess){
+      const group = subProcess.getContainer();
+      const resultModel = group.removeItem(subProcess, itemId);
+      graph.updateItem(subProcess, resultModel);
+    }
   }
   initCommands(){
     const cmdPlugin = this;
@@ -179,6 +181,7 @@ class Command{
         return mode === 'edit' && cmdPlugin.get('_command').current > 0;
       },
       execute: function(graph) {
+        debugger;
         const manager = cmdPlugin.get('_command');
         const cmd = manager.queue[manager.current - 1];
         if(cmd) {

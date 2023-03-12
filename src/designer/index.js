@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import styles from './index.module.less';
 import G6 from '@antv/g6/src';
 import {getShapeName} from './util/clazz'
@@ -8,14 +8,14 @@ import Toolbar from './plugins/toolbar'
 import AddItemPanel from './plugins/addItemPanel'
 import CanvasPanel from './plugins/canvasPanel'
 import {exportXML} from "./util/bpmn";
-import LangContext from "./util/context";
+import LangContext, {SchemaContext} from "./util/context";
 import DetailPanel from "./components/DetailPanel";
 import ItemPanel from "./components/ItemPanel";
 import ToolbarPanel from "./components/ToolbarPanel";
 import registerShape from './shape'
 import registerBehavior from './behavior'
-import convertDto, {convertVo} from "./util/converter";
-import {Modal} from "antd";
+import convertDto from "./util/converter";
+import {Drawer, Modal} from "antd";
 
 registerShape(G6);
 registerBehavior(G6);
@@ -39,6 +39,7 @@ class Designer extends Component {
                 signalDefs: [],
                 messageDefs: [],
             },
+            open: false,
         };
     }
 
@@ -155,9 +156,9 @@ class Designer extends Component {
                 if (!item) {
                     item = this.getNodeInSubProcess(items[0])
                 }
-                this.setState({selectedModel: {...item.getModel()}});
+                this.setState({selectedModel: {...item.getModel()}, open: true});
             } else {
-                this.setState({selectedModel: this.state.processModel});
+                this.setState({selectedModel: this.state.processModel, open: true});
             }
         });
         const page = this.pageRef.current;
@@ -222,13 +223,18 @@ class Designer extends Component {
         return null;
     }
 
+    onClose = () => {
+        this.setState({...this.state, open: false});
+    };
+
     render() {
         const height = this.props.height;
         const {isView, mode, users, groups, lang} = this.props;
-        const {selectedModel, processModel} = this.state;
+        const {selectedModel, processModel, open} = this.state;
         const {signalDefs, messageDefs} = processModel;
         const i18n = locale[lang.toLowerCase()];
         const readOnly = mode !== "edit";
+
         return (
             <LangContext.Provider value={{i18n, lang}}>
                 <div className={styles.root}>
@@ -237,6 +243,15 @@ class Designer extends Component {
                         {!isView && <ItemPanel ref={this.itemPanelRef} height={height}/>}
                         <div ref={this.pageRef} className={styles.canvasPanel}
                              style={{height, width: isView ? '100%' : '70%', borderBottom: isView ? 0 : null}}/>
+                    </div>
+                    <Drawer
+                        title={i18n[selectedModel.clazz] ? i18n[selectedModel.clazz] : '模块配置'}
+                        width={720}
+                        placement="right"
+                        onClose={this.onClose}
+                        open={open}
+                        bodyStyle={{paddingBottom: 80}}
+                    >
                         {!isView && <DetailPanel ref={this.detailPanelRef}
                                                  height={height}
                                                  model={selectedModel}
@@ -249,7 +264,7 @@ class Designer extends Component {
                                                      this.onItemCfgChange(key, val)
                                                  }}/>
                         }
-                    </div>
+                    </Drawer>
                 </div>
             </LangContext.Provider>
         );
