@@ -1,95 +1,32 @@
 import styles from "./index.module.less";
 import {Button, Input, Popover, Switch,} from "antd";
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import DefaultDetail from "./DefaultDetail";
 import LangContext, {SchemaContext} from "../../util/context";
 import FormRender, {useForm} from 'form-render';
 import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
-import QueueAnim from 'rc-queue-anim';
 
-const schema = {
-    "type": "object",
-    "properties": {
-        "current": {
-            "title": "当前金额",
-            "type": "string",
-            "description": "关系",
-            "enum": [
-                "=",
-                "\u003E",
-                "\u003C",
-                "\u003E=",
-                "\u003C="
-            ],
-            "widget": "select",
-            "hidden": false,
-            "width": "40%",
-            "enumNames": [
-                "=",
-                ">",
-                "<",
-                ">=",
-                "<="
-            ],
-            // "labelWidth": "10%"
-        },
-        "target": {
-            "title": "金额",
-            "type": "number",
-            "width": "40%",
-            "labelWidth": "5%",
-            "description": "元"
-        }
-    },
-}
+let nextId = 0;
+let nextFormId = 0;
+let nextGroupId = 0;
 
-
-const amountSchema = {
-    type: "object",
-    properties: {
-        current: {
-            title: "当前金额",
-            type: "string",
-            description: "人民币",
-            enum: [
-                "=",
-                ">",
-                "<",
-                ">=",
-                "<=",
-            ],
-            widget: "select",
-            hidden: false,
-            width: "40%",
-            enumNames: [
-                "等于",
-                "大于",
-                "小于",
-                "大于或等于",
-                "小于或等于",
-            ],
-            labelWidth: 159
-        },
-        target: {
-            title: "金额",
-            type: "number",
-            width: "40%",
-            labelWidth: 80,
-            description: "元",
-        },
-    }
-};
-
-
-const ConditionGroup = ({value, deleteGroup, schema, form}) => {
-    const [conditionFroms, setConditionFroms] = useState([]);
+const ConditionGroup = ({value, deleteGroup, schema, form, updateGroup}) => {
+    const {conditionFroms = [], groupId} = value;
     const addConditionForm = (targetSchema) => {
-        setConditionFroms([...conditionFroms, targetSchema])
+        let newProperties = {};
+        let index = ++nextId;
+        for (const [key, val] of Object.entries(targetSchema.properties)) {
+            newProperties = {
+                ...newProperties,
+                [key + (index)]: val,
+            }
+        }
+        updateGroup(groupId, [...conditionFroms, {...targetSchema, formId: ++nextFormId, properties: newProperties}])
     }
 
     const deleteForm = (value) => {
-        const filtered = conditionFroms.filter(e => e !== value)
-        setConditionFroms([...filtered]);
+        const filtered = conditionFroms.filter(e => e.formId !== value.formId);
+        updateGroup(groupId, [...filtered])
     }
 
     const popContent = (schema) => {
@@ -97,19 +34,20 @@ const ConditionGroup = ({value, deleteGroup, schema, form}) => {
             const {properties} = schema.schema;
             let keys = Object.keys(properties);
             return <>
-                {keys.map((value, index, array) => {
+                {keys.map((value, index, _) => {
                     const targetSchema = properties[value];
-                    return <Button type={"link"} key ={index} onClick={() => addConditionForm(targetSchema)}>{value}</Button>
+                    return <Button type={"link"} key={index}
+                                   onClick={() => addConditionForm(targetSchema)}>{value}</Button>
                 })}
             </>
         } else {
-            return <div></div>
+            return <div>请自定义审批表单</div>
         }
     }
 
-    return <div className={styles.conditionGroup} key={value}>
+    return <div className={styles.conditionGroup} key={groupId}>
         <div className={styles.groupHeader}>
-            <span className={styles.groupName}>条件组{value}</span>
+            <span className={styles.groupName}>条件组{groupId}</span>
             <div className={styles.groupCp}>
                 <span>组内条件关系：</span>
                 <span>或 <Switch size={"small"}/> 且 </span>
@@ -124,17 +62,17 @@ const ConditionGroup = ({value, deleteGroup, schema, form}) => {
         <div className={styles.groupContent}>
             {conditionFroms.length === 0 ?
                 <span style={{paddingLeft: 200}}>点击右上角 + 为本条件组添加条件 ☝ </span> :
-                conditionFroms.map((value, index, array) => {
+                conditionFroms.map((value, index, _) => {
                     return <div className={styles.formContent} key={index}>
                         <FormRender schema={value} form={form}/>
                         <Button
                             style={{
                                 position: 'relative',
-                                top: -35,
-                                left: 450
+                                top: -32,
+                                left: 600
                             }}
                             type={"link"}
-                            onClick={() => deleteForm(1)}
+                            onClick={() => deleteForm(value)}
                         >
                             <DeleteOutlined/>
                         </Button>
@@ -144,36 +82,56 @@ const ConditionGroup = ({value, deleteGroup, schema, form}) => {
     </div>;
 }
 
-/**
- * 条件组集合
- * @constructor
- */
-const ConditionGroupList = ({form, schema}) => {
-    const [conditionGroups, setConditionGroups] = useState([]);
+const ConditionGroupList = ({model, form, schema, onChange}) => {
+    const {conditionGroups = [], conditionGroupValues = {}} = model;
+
+    useEffect(() => {
+       form.setValues(conditionGroupValues);
+    })
+
     const addConditionGroup = () => {
-        setConditionGroups([...conditionGroups, ++nextId])
+        onChange('conditionGroups', [...conditionGroups, {groupId: ++nextGroupId}])
+        const values = form.getValues();
+        onChange('conditionGroupValues', values);
+    }
+
+    const updateGroup = (updatedGroupId, conditionFroms) => {
+        conditionGroups.forEach((value) => {
+            if (value.groupId === updatedGroupId) {
+                value.conditionFroms = conditionFroms;
+            }
+        });
+        onChange('conditionGroups', [...conditionGroups]);
+        const values = form.getValues();
+        onChange('conditionGroupValues', values)
     }
 
     const deleteGroup = (value) => {
-        const filtered = conditionGroups.filter(e => e !== value)
-        setConditionGroups([...filtered])
+        const filtered = conditionGroups.filter(e => e.groupId !== value.groupId)
+        onChange('conditionGroups', [...filtered]);
+        const values = form.getValues();
+        onChange('conditionGroupValues', values)
     }
     return <>
         <div className={styles.panelRow}>
             <Button onClick={addConditionGroup} type={"primary"}>添加条件组</Button>
         </div>
-        <QueueAnim className="demo-content">
-            {conditionGroups
-                .map((value, index, _) => {
-                    return <>
-                        <ConditionGroup value={value} deleteGroup={deleteGroup} schema={schema} form={form}/>
-                    </>
-                })}
-        </QueueAnim>
+        {conditionGroups
+            .map((groupValue, index, _) => {
+                return <>
+                    <ConditionGroup
+                        key={groupValue.groupId}
+                        value={groupValue}
+                        deleteGroup={deleteGroup}
+                        schema={schema}
+                        form={form}
+                        updateGroup={updateGroup}
+                    />
+                </>
+            })}
     </>
 }
 
-let nextId = 0;
 
 const FlowDetail = ({
                         model, onChange, readOnly = false,
@@ -182,8 +140,14 @@ const FlowDetail = ({
     const title = i18n['sequenceFlow'];
     const form = useForm();
     const schema = useContext(SchemaContext);
+
+    const updateConditionGroupValues = () => {
+        const values = form.getValues();
+        onChange('conditionGroupValues', values);
+    }
+
     return (
-        <div data-clazz={model.clazz}>
+        <div data-clazz={model.clazz} onBlur={updateConditionGroupValues}>
             {/*<div className={styles.panelTitle}>{title}</div>*/}
             <div className={styles.panelBody}>
                 <DefaultDetail model={model} onChange={onChange} readOnly={readOnly}/>
@@ -208,13 +172,18 @@ const FlowDetail = ({
                            disabled={readOnly}
                     />
                 </div>
-                <ConditionGroupList form={form} schema={schema}/>
+                <ConditionGroupList model={model} form={form} schema={schema} onChange={onChange}/>
                 {/*<div className={styles.panelRow}>*/}
                 {/*    <Checkbox onChange={(e) => onChange('reverse', e.target.checked)}*/}
                 {/*              disabled={readOnly}*/}
                 {/*              checked={!!model.reverse}>{i18n['sequenceFlow.reverse']}</Checkbox>*/}
                 {/*</div>*/}
             </div>
+            <Button onClick={() => {
+                let values = form.getValues();
+                console.log(values);
+            }
+            }>submit</Button>
         </div>
     )
 };

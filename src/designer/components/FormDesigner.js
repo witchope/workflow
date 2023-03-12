@@ -155,7 +155,7 @@ const singleSchema = {
         target: {
             title: "内容",
             type: "string",
-            width: "10%",
+            width: "30%",
         },
     }
 };
